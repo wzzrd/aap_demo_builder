@@ -1,4 +1,4 @@
 ansible.cfg
 filter_plugins
 group_vars/all/vault.yml
-ansible-automation-platform-setup*tar.gz
+files/ansible-automation-platform-setup*tar.gz
