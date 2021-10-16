@@ -1,0 +1,44 @@
+global
+    chroot      /var/lib/haproxy
+    pidfile     /var/run/haproxy.pid
+    user        haproxy
+    group       haproxy
+    daemon
+    tune.ssl.default-dh-param 2048
+
+    # turn on stats unix socket
+    stats socket /var/lib/haproxy/stats
+
+#---------------------------------------------------------------------
+# common defaults that all the 'listen' and 'backend' sections will
+# use if not designated in their block
+#---------------------------------------------------------------------
+defaults
+    mode                    http
+    option                  redispatch
+    option                  contstats
+    retries                 3
+    timeout connect         10s
+    timeout client          1m
+    timeout server          1m
+    option                  forwardfor
+
+#---------------------------------------------------------------------
+
+listen stats
+    bind :9000
+    mode http
+    option forwardfor       except 127.0.0.0/8
+    stats enable
+    stats uri /
+    stats refresh 3s
+
+frontend tower_fe
+    bind *:443 ssl crt /etc/haproxy/aap.pem
+    default_backend tower_be
+
+backend tower_be
+    balance roundrobin
+    {% for host in groups['controllers'] %}
+    server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:80 maxconn 100 check weight 1
+    {% endfor %}

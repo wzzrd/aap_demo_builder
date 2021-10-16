@@ -1,0 +1,93 @@
+---
+- name: configure load balancer
+  hosts: controllers,lb
+  become: no
+
+  tasks:
+    - name: create private key
+      community.crypto.openssl_privatekey:
+        path: /home/cloud-user/ca.key
+      when: "'lb' in group_names"
+
+    - name: create a csr for the ca certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: /home/cloud-user/ca.key
+        common_name: Ansible CA
+        use_common_name_for_san: false
+        basic_constraints:
+          - 'CA:TRUE'
+        basic_constraints_critical: yes
+        key_usage:
+          - keyCertSign
+        key_usage_critical: yes
+      register: ca_csr
+      when: "'lb' in group_names"
+
+    - name: create self-signed ca from csr
+      community.crypto.x509_certificate:
+        path: /home/cloud-user/ca-certificate.pem
+        csr_content: "{{ ca_csr.csr }}"
+        privatekey_path: /home/cloud-user/ca.key
+        provider: selfsigned
+      when: "'lb' in group_names"
+
+    - name: create dir to hold haproxy certs
+      file:
+        path: /home/cloud-user/haproxy
+        state: directory
+      when: "'lb' in group_names"
+
+    - name: create csr for aap lb certificate
+      community.crypto.openssl_privatekey:
+        path: /home/cloud-user/haproxy/aap.key
+      when: "'lb' in group_names"
+
+    - name: create csr for aap lb certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: /home/cloud-user/haproxy/aap.key
+        subject_alt_name:
+          - "DNS:aap.nontoonyt.lan"
+      register: aap_csr
+      when: "'lb' in group_names"
+
+    - name: sign aap lb certificate
+      community.crypto.x509_certificate:
+        csr_content: "{{ aap_csr.csr }}"
+        provider: ownca
+        ownca_path: /home/cloud-user/ca-certificate.pem
+        ownca_privatekey_path: /home/cloud-user/ca.key
+        ownca_not_after: +365d
+        ownca_not_before: "-1d"
+        path: /home/cloud-user/haproxy/aap.crt
+      register: aap_cert
+      when: "'lb' in group_names"
+
+    - name: place lb cert /etc/haproxy
+      assemble:
+        src: /home/cloud-user/haproxy
+        dest: /etc/haproxy/aap.pem
+      become: yes
+      notify: restart haproxy
+      when: "'lb' in group_names"
+      tags:
+        - cfg
+
+    - name: place haproxy configuration file
+      template:
+        src: haproxy.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+      notify: restart haproxy
+      when: "'lb' in group_names"
+      tags:
+        - cfg
+
+  handlers:
+    - name: restart haproxy
+      service:
+        name: haproxy
+        state: restarted
+

@@ -1,0 +1,75 @@
+- hosts: all
+  name: prep systems
+  become: yes
+
+  tasks:
+    - name: register with Red Hat
+      redhat_subscription:
+        state: present
+        username: "{{ rh_username }}"
+        password: "{{ rh_password }}"
+        auto_attach: true
+
+    - name: attach to correct repos
+      rhsm_repository:
+        state: enabled
+        name: ansible-automation-platform-2.0-early-access-for-rhel-8-x86_64-rpms
+      when: "'lb' not in group_names"
+      tags:
+        - repos
+
+    - name: upgrade all packages
+      dnf:
+        name: "*"
+        state: latest
+      tags:
+        - packages
+
+    - name: installing load balancer
+      dnf:
+        name: haproxy
+        state: present
+      when: "'lb' in group_names"
+
+    - name: starting load balancer
+      service:
+        name: haproxy
+        state: started
+        enabled: yes
+      when: "'lb' in group_names"
+
+    - name: prepping controller nodes
+      dnf:
+        name: ansible
+        state: present
+      when: "'controllers' in group_names"
+
+    - name: install some packages
+      dnf:
+        name:
+          - vim
+          - git
+          - mc
+        state: present
+
+    - name: generate temporary ssh key
+      community.crypto.openssh_keypair:
+        path: /home/cloud-user/.ssh/id_rsa
+      become_user: cloud-user
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+            (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
+
+    - name: read newly generated public key
+      ansible.builtin.slurp:
+        src: /home/cloud-user/.ssh/id_rsa.pub
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+            (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
+      register: pubkey
+
+    - name: send pubkey to all nodes
+      ansible.posix.authorized_key:
+        key: "{{ hostvars[groups['controllers'][0]]['pubkey']['content'] | b64decode }}"
+        comment: "cloud-user@{{ hostvars[groups['controllers'][0]]['ansible_fqdn'] }}"
+        state: present
+        user: cloud-user
+      remote_user: cloud-user

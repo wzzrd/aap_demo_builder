@@ -1,0 +1,38 @@
+- hosts: all
+  name: install aap
+  remote_user: cloud-user
+  become: no
+
+  tasks:
+    - name: create installer directory
+      file:
+        path: /home/cloud-user/installer
+        owner: cloud-user
+        group: cloud-user
+        mode: 0755
+        state: directory
+      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+
+    - name: copy over and untar setup bundle
+      ansible.builtin.unarchive:
+        src: "{{ setup_bundle }}"
+        dest: /home/cloud-user/installer
+        extra_opts:
+          - --strip-components=1
+        creates: /home/cloud-user/installer/setup.sh
+      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+
+    - name: run copy over inventory
+      ansible.builtin.template:
+        src: inventory.j2
+        dest: /home/cloud-user/installer/inventory
+        owner: cloud-user
+        group: cloud-user
+        mode: '0644'
+      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+
+    - name: run the installer
+      ansible.builtin.command:
+        cmd: ./setup.sh -e nginx_disable_https=true -- -b
+        chdir: /home/cloud-user/installer
+      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"

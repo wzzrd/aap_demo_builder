@@ -1,0 +1,4 @@
+---
+setup_bundle: ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz
+haproxy_pem: haproxy.pem
+lb_url: https://aap.nontoonyt.lan

@@ -1,0 +1,69 @@
+---
+- name: configure controller cluster
+  hosts: controllers,lb
+  become: yes
+  vars:
+    custom_config: |
+      BROADCAST_WEBSOCKET_PROTOCOL = 'http'
+      BROADCAST_WEBSOCKET_PORT = 80
+      USE_X_FORWARDED_PORT = True
+      USE_X_FORWARDED_HOST = True
+    tower_base_url: "{{ lb_url }}"
+    proxy_ip_allowed_list: ["{{ hostvars[groups['lb'][0]]['ansible_eth0']['ipv4']['address'] }}"]
+    remote_host_headers:
+      - HTTP_X_FORWARDED_FOR
+      - REMOTE_ADDR
+      - REMOTE_HOST
+    aap_username: admin
+    aap_password: "{{ aap_admin_pw }}"
+
+  tasks:
+    # From:
+    # https://access.redhat.com/solutions/5228651
+    # https://docs.ansible.com/ansible-tower/3.8.3/html/installandreference/proxy-support.html
+    # https://docs.ansible.com/ansible-tower/latest/html/administration/clustering.html
+    - name: drop in configuration file for web sockets over port 80
+      ansible.builtin.copy:
+        content: "{{ custom_config }}"
+        dest: /etc/tower/conf.d/custom.py
+        mode: 0640
+        owner: root
+        group: awx
+      notify: restart automation-controller
+      when: '"controllers" in group_names'
+
+    - name: configure controller remote host headers
+      ansible.controller.tower_settings:
+        name: REMOTE_HOST_HEADERS
+        value: "{{ remote_host_headers }}"
+        tower_host: http://127.0.0.1
+        tower_username: "{{ aap_username }}"
+        tower_password: "{{ aap_password }}"
+      run_once: yes
+      when: '"controllers" in group_names'
+
+    - name: configure proxy ip allowed list
+      ansible.controller.tower_settings:
+        name: PROXY_IP_ALLOWED_LIST
+        value: "{{ proxy_ip_allowed_list }}"
+        tower_host: http://127.0.0.1
+        tower_username: "{{ aap_username }}"
+        tower_password: "{{ aap_password }}"
+      run_once: yes
+      when: '"controllers" in group_names'
+
+    - name: configure controller base url
+      ansible.controller.tower_settings:
+        name: TOWER_URL_BASE
+        value: "{{ tower_base_url }}"
+        tower_host: http://127.0.0.1
+        tower_username: "{{ aap_username }}"
+        tower_password: "{{ aap_password }}"
+      run_once: yes
+      when: '"controllers" in group_names'
+
+  handlers:
+    - name: restart automation-controller
+      ansible.builtin.service:
+        name: automation-controller
+        state: restarted
