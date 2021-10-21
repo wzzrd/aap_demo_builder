@@ -85,6 +85,8 @@ aap:
 02_install:
   type: ansible
   playbook: 02_install.yml
+  vars:
+    installer_inventory: full_installer_inventory.j2
   groups:
     controllers:
       - controller1
