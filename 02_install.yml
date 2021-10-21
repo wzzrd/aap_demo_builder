@@ -36,6 +36,6 @@
 
     - name: run the installer
       ansible.builtin.command:
-        cmd: ./setup.sh -e nginx_disable_https={{ controller_over_http }} -- -b
+        cmd: ./setup.sh -e nginx_disable_https={{ controller_over_http }} -- -b -e required_ram=1800
         chdir: /home/cloud-user/installer
       when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
