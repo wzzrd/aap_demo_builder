@@ -9,7 +9,7 @@
       USE_X_FORWARDED_PORT = True
       USE_X_FORWARDED_HOST = True
     tower_base_url: "{{ lb_url }}"
-    proxy_ip_allowed_list: ["{{ hostvars[groups['lb'][0]]['ansible_eth0']['ipv4']['address'] }}"]
+    proxy_ip_allowed_list: "[{{ hostvars[groups['lb'][0]]['ansible_eth0']['ipv4']['address'] }}]"
     remote_host_headers:
       - HTTP_X_FORWARDED_FOR
       - REMOTE_ADDR
