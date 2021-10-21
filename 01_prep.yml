@@ -3,6 +3,7 @@
   become: yes
   vars:
     skip_update: false
+    skip_utilities: false
 
   tasks:
     - name: register with Red Hat
@@ -27,6 +28,7 @@
           - git
           - mc
         state: present
+      when: not skip_utilities
 
     - name: pre-configure controller nodes
       block:
