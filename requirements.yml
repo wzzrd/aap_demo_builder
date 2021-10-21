@@ -1,0 +1,10 @@
+---
+collections:
+  - name: community.crypto
+    version: v1.4.0
+  - name: ansible.posix
+    version: v1.1.1
+
+roles:
+  - name: karmab.kcli-modules
+    src: https://github.com/karmab/ansible-kcli-modules.git
