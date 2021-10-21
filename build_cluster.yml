@@ -1,0 +1,21 @@
+- hosts: all
+  name: build AAP 2.x cluster
+  gather_facts: no
+
+- name: check all machines up
+  import_playbook: 00_check.yml
+
+- name: prep machines
+  import_playbook: 01_prep.yml
+
+- name: install AAP 2
+  import_playbook: 02_install.yml
+
+- name: configure controllers
+  import_playbook: 03_post.yml
+
+- name: configure load balancer
+  import_playbook: 04_lb.yml
+
+- name: configure AAP
+  import_playbook: 05_aap_config.yml
