@@ -10,6 +10,38 @@ parameters:
   db_ram: 4096
   lb_cpus: 1
   lb_ram: 2048
+  skip_update: false
+  skip_utilities: false
+  ctrl_lb_groups:
+    controllers:
+      - controller1
+      - controller2
+      - controller3
+    lb:
+      - aap
+  all_groups:
+    controllers:
+      - controller1
+      - controller2
+      - controller3
+    hub:
+      - aaphub
+    lb:
+      - aap
+    db:
+      - aapdb
+  all_vms:
+    - controller1
+    - controller2
+    - controller3
+    - aap
+    - aaphub
+    - aapdb
+  ctrl_lb_vms:
+    - controller1
+    - controller2
+    - controller3
+    - aap
 
 tower_internal:
   type: network
@@ -68,41 +100,35 @@ aap:
 00_check:
   type: ansible
   playbook: 00_check.yml
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
 01_prep:
   type: ansible
   playbook: 01_prep.yml
-  groups:
-    controllers:
-      - controller1
-      - controller2
-      - controller3
-    db:
-      - aapdb
-    hub:
-      - aaphub
-    lb:
-      - aap
+  variables:
+    - skip_update: {{ skip_update }}
+    - skip_utilities: {{ skip_utilities }}
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
 02_install:
   type: ansible
   playbook: 02_install.yml
-  vars:
-    installer_inventory: full_installer_inventory.j2
-  groups:
-    controllers:
-      - controller1
-      - controller2
-      - controller3
-    db:
-      - aapdb
-    hub:
-      - aaphub
+  variables:
+    - installer_inventory: full_installer_inventory.j2
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
 03_post:
   type: ansible
   playbook: 03_post.yml
-  groups:
-    controllers:
-      - controller1
-      - controller2
-      - controller3
-    lb:
-      - aap
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
+04_lb:
+  type: ansible
+  playbook: 04_lb.yml
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
+05_config:
+  type: ansible
+  playbook: 05_config.yml
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
