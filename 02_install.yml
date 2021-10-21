@@ -27,7 +27,7 @@
 
     - name: run copy over inventory
       ansible.builtin.template:
-        src: {{ installer_inventory }}
+        src: "{{ installer_inventory }}"
         dest: /home/cloud-user/installer/inventory
         owner: cloud-user
         group: cloud-user
