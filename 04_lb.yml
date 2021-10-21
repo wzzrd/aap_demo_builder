@@ -2,6 +2,8 @@
 - name: configure load balancer
   hosts: controllers,lb
   become: no
+  vars:
+    controller_over_http: "true"
 
   tasks:
     - name: create private key
@@ -72,16 +74,33 @@
       tags:
         - cfg
 
-    - name: place haproxy configuration file
+    - name: place haproxy configuration file for http controllers
       ansible.builtin.template:
-        src: haproxy.cfg.j2
+        src: haproxy_https_controllers.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
         owner: root
         group: root
         mode: 0644
       become: yes
       notify: restart haproxy
-      when: "'lb' in group_names"
+      when: 
+        - "'lb' in group_names"
+        - controller_over_http == "true"
+      tags:
+        - cfg
+
+    - name: place haproxy configuration file for https controllers
+      ansible.builtin.template:
+        src: haproxy_https_controllers.cfg.j2
+        dest: /etc/haproxy/haproxy.cfg
+        owner: root
+        group: root
+        mode: 0644
+      become: yes
+      notify: restart haproxy
+      when: 
+        - "'lb' in group_names"
+        - controller_over_http == "false"
       tags:
         - cfg
 
