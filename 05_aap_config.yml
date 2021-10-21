@@ -1,0 +1,28 @@
+---
+- name: configure subscription manifest
+  hosts: controllers,lb
+  become: no
+  vars:
+    aap_username: admin
+    aap_password: "{{ aap_admin_pw }}"
+
+  tasks:
+    - name: configure subscription manifest
+      block:
+      - name: copy over subscription manifest
+        copy:
+          src: manifest.zip
+          dest: /tmp/manifest.zip
+          owner: cloud-user
+          group: cloud-user
+          mode: 0600
+
+      - name: upload subscription manifest
+        ansible.controller.tower_license:
+          manifest: "/tmp/manifest.zip"
+          tower_host: http://127.0.0.1
+          tower_username: "{{ aap_username }}"
+          tower_password: "{{ aap_password }}"
+
+      run_once: yes
+      when: '"controllers" in group_names'
