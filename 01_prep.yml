@@ -4,21 +4,21 @@
 
   tasks:
     - name: register with Red Hat
-      redhat_subscription:
+      community.general.redhat_subscription:
         state: present
         username: "{{ rh_username }}"
         password: "{{ rh_password }}"
         auto_attach: true
 
     - name: upgrade all packages
-      dnf:
+      ansible.builtin.dnf:
         name: "*"
         state: latest
       tags:
         - packages
 
     - name: install some packages
-      dnf:
+      ansible.builtin.dnf:
         name:
           - vim
           - git
@@ -28,14 +28,14 @@
     - name: pre-configure controller nodes
       block:
       - name: attach to correct repos
-        rhsm_repository:
+        community.general.rhsm_repository:
           state: enabled
           name: ansible-automation-platform-2.0-early-access-for-rhel-8-x86_64-rpms
         tags:
           - repos
 
       - name: prepping controller nodes
-        dnf:
+        ansible.builtin.dnf:
           name: ansible
           state: present
         when: "'controllers' in group_names"
@@ -44,12 +44,12 @@
     - name: pre-configure load balancer
       block:
       - name: installing haproxy
-        dnf:
+        ansible.builtin.dnf:
           name: haproxy
           state: present
 
       - name: starting haproxy
-        service:
+        ansible.builtin.service:
           name: haproxy
           state: started
           enabled: yes

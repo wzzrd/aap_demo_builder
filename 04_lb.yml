@@ -32,7 +32,7 @@
       when: "'lb' in group_names"
 
     - name: create dir to hold haproxy certs
-      file:
+      ansible.builtin.file:
         path: /home/cloud-user/haproxy
         state: directory
       when: "'lb' in group_names"
@@ -63,7 +63,7 @@
       when: "'lb' in group_names"
 
     - name: place lb cert /etc/haproxy
-      assemble:
+      ansible.builtin.assemble:
         src: /home/cloud-user/haproxy
         dest: /etc/haproxy/aap.pem
       become: yes
@@ -73,7 +73,7 @@
         - cfg
 
     - name: place haproxy configuration file
-      template:
+      ansible.builtin.template:
         src: haproxy.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
         owner: root
@@ -87,7 +87,7 @@
 
   handlers:
     - name: restart haproxy
-      service:
+      ansible.builtin.service:
         name: haproxy
         state: restarted
 

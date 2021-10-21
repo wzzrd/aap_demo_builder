@@ -5,7 +5,7 @@
 
   tasks:
     - name: create installer directory
-      file:
+      ansible.builtin.file:
         path: /home/cloud-user/installer
         owner: cloud-user
         group: cloud-user
