@@ -95,3 +95,21 @@ aap:
       - controller2
     lb:
       - aap
+04_lb:
+  type: ansible
+  playbook: 04_lb.yml
+  groups:
+    controllers:
+      - controller1
+      - controller2
+    lb:
+      - aap
+05_config:
+  type: ansible
+  playbook: 05_config.yml
+  groups:
+    controllers:
+      - controller1
+      - controller2
+    lb:
+      - aap
