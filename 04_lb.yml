@@ -76,7 +76,7 @@
 
     - name: place haproxy configuration file for http controllers
       ansible.builtin.template:
-        src: haproxy_https_controllers.cfg.j2
+        src: haproxy_http_controllers.cfg.j2
         dest: /etc/haproxy/haproxy.cfg
         owner: root
         group: root
