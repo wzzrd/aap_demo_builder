@@ -2,6 +2,9 @@
   name: install aap
   remote_user: cloud-user
   become: no
+  vars:
+    installer_inventory: full_installer_inventory.j2
+    controller_over_http: "true"
 
   tasks:
     - name: create installer directory
@@ -24,7 +27,7 @@
 
     - name: run copy over inventory
       ansible.builtin.template:
-        src: inventory.j2
+        src: {{ installer_inventory }}
         dest: /home/cloud-user/installer/inventory
         owner: cloud-user
         group: cloud-user
@@ -33,6 +36,6 @@
 
     - name: run the installer
       ansible.builtin.command:
-        cmd: ./setup.sh -e nginx_disable_https=true -- -b
+        cmd: ./setup.sh -e nginx_disable_https={{ controller_over_http }} -- -b
         chdir: /home/cloud-user/installer
       when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
