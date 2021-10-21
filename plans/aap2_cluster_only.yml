@@ -1,0 +1,84 @@
+parameters:
+  profile: rhel8unreg
+  network: default
+  default_domain: nontoonyt.lan
+  controller_cpus: 2
+  controller_ram: 4096
+  db_cpus: 1
+  db_ram: 2048
+  lb_cpus: 1
+  lb_ram: 2048
+
+tower_internal:
+  type: network
+  cidr: 10.0.10.0/24
+  nat: False
+default:
+  type: network
+  cidr: 192.168.122.0/24
+  domain: {{ default_domain }}
+controller1:
+  memory: {{ controller_ram }}
+  numcpus: {{ controller_cpus }}
+  nets:
+    - {{ network }}
+    - tower_internal
+  pool: first
+  profile: {{ profile }}
+  cmdline: ipv6.disable=1
+controller2:
+  memory: {{ controller_ram }}
+  numcpus: {{ controller_cpus }}
+  nets:
+    - {{ network }}
+    - tower_internal
+  pool: first
+  profile: {{ profile }}
+aapdb:
+  memory: {{ db_ram }}
+  numcpus: {{ db_cpus }}
+  nets:
+    - {{ network }}
+  pool: ssd
+  profile: {{ profile }}
+aap:
+  memory: {{ lb_ram }}
+  numcpus: {{ lb_cpus }}
+  nets:
+    - {{ network }}
+  pool: second
+  profile: {{ profile }}
+00_check:
+  type: ansible
+  playbook: 00_check.yml
+01_prep:
+  type: ansible
+  playbook: 01_prep.yml
+  groups:
+    controllers:
+      - controller1
+      - controller2
+    db:
+      - aapdb
+    lb:
+      - aap
+02_install:
+  type: ansible
+  playbook: 02_install.yml
+  vars:
+    installer_inventory: cluster_only_installer_inventory.j2
+  groups:
+    controllers:
+      - controller1
+      - controller2
+    db:
+      - aapdb
+03_post:
+  type: ansible
+  playbook: 03_post.yml
+  groups:
+    controllers:
+      - controller1
+      - controller2
+    lb:
+      - aap
