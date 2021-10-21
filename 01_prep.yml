@@ -1,6 +1,8 @@
 - hosts: all
   name: prep systems
   become: yes
+  vars:
+    skip_update: false
 
   tasks:
     - name: register with Red Hat
@@ -14,6 +16,7 @@
       ansible.builtin.dnf:
         name: "*"
         state: latest
+      when: not skip_update
       tags:
         - packages
 
