@@ -2,5 +2,6 @@ ansible.cfg
 filter_plugins
 group_vars/all/vault.yml
 files/ansible-automation-platform-setup*tar.gz
+files/manifest.zip
 inventory
 .cache
