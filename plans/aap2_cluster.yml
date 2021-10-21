@@ -5,7 +5,7 @@ parameters:
   controller_cpus: 2
   controller_ram: 8192
   hub_cpus: 1
-  hub_ram: 2048
+  hub_ram: 8192
   db_cpus: 1
   db_ram: 4096
   lb_cpus: 1
