@@ -16,15 +16,44 @@ Before you can deploy the plan, you need to do a couple of things:
 - create appropriate `~/.kcli/config.yml` and `~/.kcli/profiles.yml` files. Find some
 examples in the `samples` directory of the [kcli GitHub
 repo](https://github.com/karmab/kcli/tree/master/samples).
+- go to
+    [access.redhat.com](https://access.redhat.com/management/subscription_allocations), create a subscription allocation and download it. Place the manifest.zip file in the `files` directory of this repo.
 - download ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz from
   [access.redhat.com](https://access.redhat.com/downloads/content/480/ver=Early%20Access%202.0/rhel---8/Early%20Access%202.0/x86_64/product-software) and drop it into the `files` directory of this repo. The download location will 
   change after AAP 2.1 is released properly.
 
-## Running the plan
+## Deploying the plan
+
+### 
+
+### What are the different available plans?
+Because not everyone has a really beefy machine, I have created various plans to enable
+as many people as possible to enjoy automated demo deployment:
+
+- aap2_cluster.yml deploys a three node controller cluster with 8192MiB of RAM each,
+  an HAProxy load balancer with 2048MiB of RAM, an Automation Hub machine with another
+  8192MiB of RAM and a database - shared between the controller and Hub machines - with
+  4096MiB of RAM
+- aap2_cluster_small deploys two controller nodes only, and brings down the amount of
+  required memory significantly, by using only 4096MiB of RAM for the controller nodes,
+  and only 2048MiB for the database, load balancer and Hub machines. This also requires
+  passing required_ram=1800 to the installer, resulting in a cluster that is unsupported
+  (but will run a simple demo just fine in my experience).
+- aap2_cluster_only does the same as aap2_cluster_small, but does not deploy the Hub
+- aap2_single_node does the same as aap2_cluster_only, but with a single node controller
+  "cluster"
+
+### Actually running the plan
 After filling in the pre-requisites - which you have to do only once per machine - you
 can deploy the plan from the root of this project by running:
 ```
 kcli create plan aap-cluster -f plans/aap2_cluster.yml
+```
+
+To prevent the machines from updating and installing git, mc and vim, run this instead:
+
+```
+kcli create plan aap-cluster -f plans/aap2_cluster.yml -P skip_updates=true -P skip_utilities=true
 ```
 
 Wait for a couple of minutes for your plan to spin up and you are done :)
