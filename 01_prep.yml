@@ -2,7 +2,7 @@
   name: prep systems
   become: yes
   vars:
-    skip_update: false
+    skip_updates: false
     skip_utilities: false
 
   tasks:
@@ -17,7 +17,7 @@
       ansible.builtin.dnf:
         name: "*"
         state: latest
-      when: not skip_update
+      when: not skip_updates
       tags:
         - packages
 
