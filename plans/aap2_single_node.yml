@@ -1,0 +1,102 @@
+parameters:
+  profile: rhel8
+  network: default
+  default_domain: redhat.lan
+  controller_cpus: 2
+  controller_ram: 4096
+  db_cpus: 1
+  db_ram: 2048
+  lb_cpus: 1
+  lb_ram: 2048
+  installer_inventory: cluster_only_installer_inventory.j2
+  setup_bundle: ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz
+  lb_url: https://aap.{{ default_domain }}
+  all_groups:
+    controllers:
+      - controller1
+    lb:
+      - aap
+    db:
+      - aapdb
+  all_vms:
+    - controller1
+    - aap
+    - aapdb
+  ctrl_lb_groups:
+    controllers:
+      - controller1
+    lb:
+      - aap
+  ctrl_lb_vms:
+    - controller1
+    - aap
+
+tower_internal:
+  type: network
+  cidr: 10.0.10.0/24
+  nat: False
+default:
+  type: network
+  cidr: 192.168.122.0/24
+  domain: {{ default_domain }}
+controller1:
+  memory: {{ controller_ram }}
+  numcpus: {{ controller_cpus }}
+  nets:
+    - {{ network }}
+    - tower_internal
+  pool: default
+  profile: {{ profile }}
+aapdb:
+  memory: {{ db_ram }}
+  numcpus: {{ db_cpus }}
+  nets:
+    - {{ network }}
+  pool: default
+  profile: {{ profile }}
+aap:
+  memory: {{ lb_ram }}
+  numcpus: {{ lb_cpus }}
+  nets:
+    - {{ network }}
+  pool: default
+  profile: {{ profile }}
+00_check:
+  type: ansible
+  playbook: 00_check.yml
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
+01_prep:
+  type: ansible
+  playbook: 01_prep.yml
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
+  variables:
+    skip_utilities: {{ skip_utilities | default('false') }}
+    skip_updates: {{ skip_updates | default('false') }}
+    timezone: {{ timezone | default('Europe/Amsterdam') }}
+02_install:
+  type: ansible
+  playbook: 02_install.yml
+  groups: {{ all_groups }}
+  vms: {{ all_vms }}
+  variables:
+    installer_inventory: {{ installer_inventory }}
+    controller_over_http: {{ controller_over_http | default('true') }}
+03_post:
+  type: ansible
+  playbook: 03_post.yml
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
+04_lb:
+  type: ansible
+  playbook: 04_lb.yml
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
+  variables:
+    controller_over_http: {{ controller_over_http | default('true') }}
+05_config:
+  type: ansible
+  playbook: 05_aap_config.yml
+  groups: {{ ctrl_lb_groups }}
+  vms: {{ ctrl_lb_vms }}
