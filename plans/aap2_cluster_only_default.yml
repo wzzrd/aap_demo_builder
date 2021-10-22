@@ -1,0 +1,35 @@
+profile: rhel8
+network: default
+default_domain: redhat.lan
+controller_cpus: 2
+controller_ram: 4096
+db_cpus: 1
+db_ram: 2048
+lb_cpus: 1
+lb_ram: 2048
+installer_inventory: cluster_only_installer_inventory.j2
+setup_bundle: ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz
+lb_url: https://aap.{{ default_domain }}
+all_groups:
+  controllers:
+    - controller1
+    - controller2
+  lb:
+    - aap
+  db:
+    - aapdb
+all_vms:
+  - controller1
+  - controller2
+  - aap
+  - aapdb
+ctrl_lb_groups:
+  controllers:
+    - controller1
+    - controller2
+  lb:
+    - aap
+ctrl_lb_vms:
+  - controller1
+  - controller2
+  - aap

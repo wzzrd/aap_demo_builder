@@ -87,6 +87,6 @@ aap:
     controller_over_http: {{ controller_over_http | default('true') }}
 05_config:
   type: ansible
-  playbook: 05_config.yml
+  playbook: 05_aap_config.yml
   groups: {{ ctrl_lb_groups }}
   vms: {{ ctrl_lb_vms }}

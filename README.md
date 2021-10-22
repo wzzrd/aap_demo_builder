@@ -54,15 +54,15 @@ as many people as possible to enjoy automated demo deployment:
 
 ### Actually running the plan
 After filling in the pre-requisites - which you have to do only once per machine - you
-can deploy the plan from the root of this project by running:
+can deploy the plan from the root of this project by running from the `plans` directory:
 ```
-kcli create plan aap-cluster -f plans/aap2_cluster.yml
+kcli create plan aap-cluster -f full_aap2_cluster.yml
 ```
 
 To prevent the machines from updating and installing git, mc and vim, run this instead:
 
 ```
-kcli create plan aap-cluster -f plans/aap2_cluster.yml -P skip_updates=true -P skip_utilities=true
+kcli create plan aap-cluster -f full_aap2_cluster.yml -P skip_updates=true -P skip_utilities=true
 ```
 
 Wait for a couple of minutes for your plan to spin up and you are done :)
