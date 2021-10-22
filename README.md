@@ -21,6 +21,14 @@ repo](https://github.com/karmab/kcli/tree/master/samples).
 - download ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz from
   [access.redhat.com](https://access.redhat.com/downloads/content/480/ver=Early%20Access%202.0/rhel---8/Early%20Access%202.0/x86_64/product-software) and drop it into the `files` directory of this repo. The download location will 
   change after AAP 2.1 is released properly.
+- create a vault to store your credentials: `rh_username` and `rh_password` for your
+    access.redhat.com credentials, and `aap_admin_pw`, `aap_db_pw`, `hub_admin_pw` and
+    `hub_db_pw` for the application and database passwords. 
+
+Note: the default plan users the same storage pool ('default') for all 6 VMs. That is
+a lot to stomach for most storage devices. If you have more than one disk, consider
+creating a storage pool on it and spreading your VMs over multiple pools.
+
 
 ## Deploying the plan
 
