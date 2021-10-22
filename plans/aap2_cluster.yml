@@ -12,6 +12,8 @@ parameters:
   lb_ram: 2048
   skip_update: false
   skip_utilities: false
+  installer_inventory: full_installer_inventory.j2
+  controller_over_http: "true"
   groups:
     controllers:
       - controller1
@@ -88,5 +90,10 @@ aap:
 build_cluster:
   type: ansible
   playbook: build_cluster.yml
+  variables:
+    skip_utilities: {{ skip_utilities }}
+    skip_update: {{ skip_update }}
+    installer_inventory: {{ installer_inventory }}
+    controller_over_http: {{ controller_over_http }}
   groups: {{ groups }}
   vms: {{ vms }}
