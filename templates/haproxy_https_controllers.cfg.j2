@@ -43,5 +43,5 @@ frontend tower_fe
 backend tower_be
     balance roundrobin
     {% for host in groups['controllers'] %}
-    server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:443 maxconn 100 check weight 1
+    server {{ hostvars[host]['ansible_hostname'] }} {{ hostvars[host]['ansible_eth0']['ipv4']['address'] }}:443 maxconn 100 check ssl weight 1
     {% endfor %}
