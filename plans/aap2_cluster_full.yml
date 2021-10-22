@@ -53,12 +53,12 @@ aap:
   profile: {{ profile }}
 00_check:
   type: ansible
-  playbook: playbooks/00_check.yml
+  playbook: ../00_check.yml
   groups: {{ all_groups }}
   vms: {{ all_vms }}
 01_prep:
   type: ansible
-  playbook: playbooks/01_prep.yml
+  playbook: ../01_prep.yml
   groups: {{ all_groups }}
   vms: {{ all_vms }}
   variables:
@@ -67,7 +67,7 @@ aap:
     timezone: {{ timezone | default('Europe/Amsterdam') }}
 02_install:
   type: ansible
-  playbook: playbooks/02_install.yml
+  playbook: ../02_install.yml
   groups: {{ all_groups }}
   vms: {{ all_vms }}
   variables:
@@ -75,18 +75,18 @@ aap:
     controller_over_http: {{ controller_over_http | default('true') }}
 03_post:
   type: ansible
-  playbook: playbooks/03_post.yml
+  playbook: ../03_post.yml
   groups: {{ ctrl_lb_groups }}
   vms: {{ ctrl_lb_vms }}
 04_lb:
   type: ansible
-  playbook: playbooks/04_lb.yml
+  playbook: ../04_lb.yml
   groups: {{ ctrl_lb_groups }}
   vms: {{ ctrl_lb_vms }}
   variables:
     controller_over_http: {{ controller_over_http | default('true') }}
 05_config:
   type: ansible
-  playbook: playbooks/05_aap_config.yml
+  playbook: ../05_aap_config.yml
   groups: {{ ctrl_lb_groups }}
   vms: {{ ctrl_lb_vms }}
