@@ -4,4 +4,5 @@ group_vars/all/vault.yml
 files/ansible-automation-platform-setup*tar.gz
 files/manifest.zip
 inventory
+plans/maxim*
 .cache
