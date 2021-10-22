@@ -23,7 +23,8 @@ repo](https://github.com/karmab/kcli/tree/master/samples).
   change after AAP 2.1 is released properly.
 - create a vault to store your credentials: `rh_username` and `rh_password` for your
     access.redhat.com credentials, and `aap_admin_pw`, `aap_db_pw`, `hub_admin_pw` and
-    `hub_db_pw` for the application and database passwords. 
+    `hub_db_pw` for the application and database passwords. Easiest is to create it as
+    `group_vars/all/vault.yml`.
 
 Note: the default plan users the same storage pool ('default') for all 6 VMs. That is
 a lot to stomach for most storage devices. If you have more than one disk, consider
