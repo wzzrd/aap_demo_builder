@@ -89,13 +89,6 @@
       tags:
         - cfg
 
-    # we have to manually stop and later restart haproxy: replacing the config file
-    # while the service is running will make it hang on restart
-    - name: stop haproxy
-      ansible.builtin.service:
-        name: haproxy
-        state: stopped
-
     - name: place haproxy configuration file for https controllers
       ansible.builtin.template:
         src: haproxy_https_controllers.cfg.j2
@@ -111,7 +104,10 @@
       tags:
         - cfg
 
-    - name: start haproxy
+  handlers:
+    - name: restart haproxy
       ansible.builtin.service:
         name: haproxy
-        state: stopped
+        state: restarted
+      become: yes
+
