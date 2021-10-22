@@ -12,16 +12,15 @@ controller1:
   nets:
     - {{ network }}
     - tower_internal
-  pool: first
+  pool: default
   profile: {{ profile }}
-  cmdline: ipv6.disable=1
 controller2:
   memory: {{ controller_ram }}
   numcpus: {{ controller_cpus }}
   nets:
     - {{ network }}
     - tower_internal
-  pool: first
+  pool: default
   profile: {{ profile }}
 controller3:
   memory: {{ controller_ram }}
@@ -29,28 +28,28 @@ controller3:
   nets:
     - {{ network }}
     - tower_internal
-  pool: first
+  pool: default
   profile: {{ profile }}
 aapdb:
   memory: {{ db_ram }}
   numcpus: {{ db_cpus }}
   nets:
     - {{ network }}
-  pool: ssd
+  pool: default
   profile: {{ profile }}
 aaphub:
   memory: {{ hub_ram }}
   numcpus: {{ hub_cpus }}
   nets:
     - {{ network }}
-  pool: second
+  pool: default
   profile: {{ profile }}
 aap:
   memory: {{ lb_ram }}
   numcpus: {{ lb_cpus }}
   nets:
     - {{ network }}
-  pool: second
+  pool: default
   profile: {{ profile }}
 00_check:
   type: ansible
