@@ -1,6 +1,6 @@
-profile: rhel8unreg
+profile: rhel8
 network: default
-default_domain: nontoonyt.lan
+default_domain: redhat.lan
 controller_cpus: 2
 controller_ram: 8192
 hub_cpus: 1
