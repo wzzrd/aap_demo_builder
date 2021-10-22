@@ -4,6 +4,8 @@ collections:
     version: v1.4.0
   - name: ansible.posix
     version: v1.1.1
+  - name: community.general
+    version: v1.3.6
 
 roles:
   - name: karmab.kcli-modules

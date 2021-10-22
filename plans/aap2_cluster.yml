@@ -109,6 +109,7 @@ aap:
   variables:
     skip_utilities: {{ skip_utilities | default('false') }}
     skip_updates: {{ skip_updates | default('false') }}
+    timezone: {{ timezone | default('Europe/Amsterdam') }}
 02_install:
   type: ansible
   playbook: 02_install.yml
