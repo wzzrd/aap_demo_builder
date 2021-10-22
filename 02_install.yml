@@ -14,7 +14,8 @@
         group: cloud-user
         mode: 0755
         state: directory
-      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+              (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
 
     - name: copy over and untar setup bundle
       ansible.builtin.unarchive:
@@ -23,7 +24,8 @@
         extra_opts:
           - --strip-components=1
         creates: /home/cloud-user/installer/setup.sh
-      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+              (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
 
     - name: run copy over inventory
       ansible.builtin.template:
@@ -32,10 +34,12 @@
         owner: cloud-user
         group: cloud-user
         mode: '0644'
-      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+              (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
 
     - name: run the installer
       ansible.builtin.command:
         cmd: ./setup.sh -e nginx_disable_https={{ controller_over_http }} -- -b -e required_ram=1800
         chdir: /home/cloud-user/installer
-      when: "inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']"
+      when: (inventory_hostname == hostvars[groups['controllers'][0]]['ansible_fqdn']) or
+              (ansible_fqdn == hostvars[groups['controllers'][0]]['ansible_fqdn'])
