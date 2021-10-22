@@ -8,7 +8,7 @@
   tasks:
     - name: set timezone
       community.general.timezone:
-        name: {{ timezone }}
+        name: "{{ timezone }}"
 
     - name: register with Red Hat
       community.general.redhat_subscription:
