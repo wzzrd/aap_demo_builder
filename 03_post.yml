@@ -30,7 +30,9 @@
         owner: root
         group: awx
       notify: restart automation-controller
-      when: '"controllers" in group_names'
+      when: 
+        - '"controllers" in group_names'
+        - controller_over_http|bool
 
     - name: configure controller remote host headers
       ansible.controller.tower_settings:

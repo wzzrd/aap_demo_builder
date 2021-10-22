@@ -2,8 +2,6 @@
 - name: configure load balancer
   hosts: controllers,lb
   become: no
-  vars:
-    controller_over_http: "true"
 
   tasks:
     - name: create private key
@@ -85,7 +83,7 @@
       notify: restart haproxy
       when: 
         - "'lb' in group_names"
-        - controller_over_http == "true"
+        - controller_over_http|bool
       tags:
         - cfg
 
@@ -100,7 +98,7 @@
       notify: restart haproxy
       when: 
         - "'lb' in group_names"
-        - controller_over_http == "false"
+        - not controller_over_http|bool
       tags:
         - cfg
 
