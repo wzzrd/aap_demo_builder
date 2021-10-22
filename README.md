@@ -73,3 +73,9 @@ you'll need to manually remove the subscription allocations on access.redhat.com
 
 ## Pull requests, feature requests, etc.
 Please send them :)
+
+Some things tho: I know it is  possible to split the parameters for each plan into
+a _default.yml file.  That, however, brings it's own problems with calling the ansible
+playbook, the location of the vault and templates and other things. Therefore, I am
+inclined not to split them for now.
+
