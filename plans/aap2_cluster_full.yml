@@ -12,7 +12,7 @@ parameters:
   lb_ram: 2048
   installer_inventory: full_installer_inventory.j2
   setup_bundle: ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz
-  lb_url: https://aap.{{ default_domain }}
+  lb_url: https://aap.nontoonyt.lan
   all_groups:
     controllers:
       - controller1
