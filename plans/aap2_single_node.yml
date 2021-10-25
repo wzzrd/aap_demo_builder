@@ -1,7 +1,7 @@
 parameters:
   profile: rhel8
-  network: default
-  default_domain: redhat.lan
+  network: lab
+  default_domain: redhat.lab
   controller_cpus: 2
   controller_ram: 4096
   db_cpus: 1
@@ -10,7 +10,7 @@ parameters:
   lb_ram: 2048
   installer_inventory: cluster_only_installer_inventory.j2
   setup_bundle: ansible-automation-platform-setup-2.0.1-1-early-access.tar.gz
-  lb_url: https://aap.nontoonyt.lan
+  lb_url: https://aap.redhat.lab
   all_groups:
     controllers:
       - controller1
@@ -35,9 +35,9 @@ tower_internal:
   type: network
   cidr: 10.0.10.0/24
   nat: False
-default:
+lab:
   type: network
-  cidr: 192.168.122.0/24
+  cidr: 192.168.125.0/24
   domain: {{ default_domain }}
 controller1:
   memory: {{ controller_ram }}
