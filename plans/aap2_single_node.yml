@@ -83,11 +83,15 @@ aap:
   variables:
     installer_inventory: {{ installer_inventory }}
     controller_over_http: {{ controller_over_http | default('true') }}
+    setup_bundle: {{ setup_bundle }}
 03_post:
   type: ansible
   playbook: 03_post.yml
   groups: {{ ctrl_lb_groups }}
   vms: {{ ctrl_lb_vms }}
+  variables:
+    lb_url: {{ lb_url }}
+    controller_over_http: {{ controller_over_http | default('true') }}
 04_lb:
   type: ansible
   playbook: 04_lb.yml
