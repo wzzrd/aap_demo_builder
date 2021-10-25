@@ -67,6 +67,33 @@ kcli create plan aap-cluster -f plans/aap2_cluster_plans.yml -P skip_updates=tru
 
 Wait for a couple of minutes for your plan to spin up and you are done :)
 
+#### DNS
+If you want, you can drop this content into
+`/etc/NetworkManager/dispatcher.d/pre-up.d/97-lab.sh` or something similar, and manually
+execute it the first time the `redhat.lab` network is created (after a reboot, this'll
+be automatic) to get DNS resolving for the `redhat.lab` domain:
+
+```bash
+#!/bin/sh
+# This is a NetworkManager dispatcher script to configure split DNS for
+# the 'crc' libvirt network.
+# The corresponding crc bridge is recreated each time the system reboots, so
+# it cannot be configured permanently through NetworkManager.
+# Changing DNS settings with nmcli requires the connection to go down/up,
+# so we directly make the change using resolvectl
+
+export LC_ALL=C
+
+if [ "$1" = lab ]; then
+        resolvectl domain "$1" redhat.lab
+        resolvectl dns "$1" 192.168.125.1
+        resolvectl default-route "$1" false
+        resolvectl dnssec "$1" no
+fi
+
+exit 0
+```
+
 ## Cleaning up
 As you are running RHEL8 images, when after running `kcli delete plan aap-cluster`,
 you'll need to manually remove the subscription allocations on access.redhat.com.
