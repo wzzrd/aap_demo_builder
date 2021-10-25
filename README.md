@@ -96,7 +96,7 @@ exit 0
 
 #### In action
 Here's a screencast of the script in action. 
-<a href="https://asciinema.org/a/444487" target="_blank"><img src="https://asciinema.org/a/444487.svg" /></a>
+<script id="asciicast-444487" src="https://asciinema.org/a/444487.js" async></script>
 
 ## Cleaning up
 As you are running RHEL8 images, when after running `kcli delete plan aap-cluster`,
