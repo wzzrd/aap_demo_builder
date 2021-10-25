@@ -26,7 +26,7 @@ repo](https://github.com/karmab/kcli/tree/master/samples).
     `hub_db_pw` for the application and database passwords. Easiest is to create it as
     `group_vars/all/vault.yml`.
 
-Note: the default plan users the same storage pool ('default') for all 6 VMs. That is
+Note: the default plan uses the same storage pool ('default') for all 6 VMs. That is
 a lot to stomach for most storage devices. If you have more than one disk, consider
 creating a storage pool on it and spreading your VMs over multiple pools.
 
@@ -101,8 +101,8 @@ you'll need to manually remove the subscription allocations on access.redhat.com
 ## Pull requests, feature requests, etc.
 Please send them :)
 
-Some things tho: I know it is  possible to split the parameters for each plan into
-a _default.yml file.  That, however, brings it's own problems with calling the ansible
+One thing tho: I know it is possible to split the parameters for each plan into
+a `_default.yml` file. That, however, brings it's own problems with calling the ansible
 playbook, the location of the vault and templates and other things. Therefore, I am
 inclined not to split them for now.
 
