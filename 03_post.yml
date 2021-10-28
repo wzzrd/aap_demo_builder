@@ -64,6 +64,16 @@
       run_once: yes
       when: '"controllers" in group_names'
 
+    - name: ignore self-signed galaxy certifications
+      ansible.controller.tower_settings:
+        name: GALAXY_IGNORE_CERTS
+        value: "True"
+        tower_host: http://127.0.0.1
+        tower_username: "{{ aap_username }}"
+        tower_password: "{{ aap_password }}"
+      run_once: yes
+      when: '"controllers" in group_names'
+
   handlers:
     - name: restart automation-controller
       ansible.builtin.service:
