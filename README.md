@@ -98,10 +98,6 @@ exit 0
 Here's a screencast of the script in action. 
 <a href="https://asciinema.org/a/444487" target="_blank"><img src="https://asciinema.org/a/444487.svg" /></a>
 
-## Cleaning up
-As you are running RHEL8 images, when after running `kcli delete plan aap-cluster`,
-you'll need to manually remove the subscription allocations on access.redhat.com.
-
 ## Pull requests, feature requests, etc.
 Please send them :)
 
